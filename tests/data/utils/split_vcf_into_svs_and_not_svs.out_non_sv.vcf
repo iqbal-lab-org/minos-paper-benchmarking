@@ -1,0 +1,7 @@
+##header1
+##header2
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	sample1
+ref	1	.	A	G	.	.	.	.	.
+ref	2	.	A	GA	.	.	.	.	.
+ref	3	.	A	GA,T	.	.	.	.	.
+ref	4	.	A	GAT,T,C	.	.	.	.	.

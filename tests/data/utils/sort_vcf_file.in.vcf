@@ -1,0 +1,8 @@
+##header1
+##header2
+##contig=foo this line should get removed
+#CHROM
+ref2	20	foo
+ref1	1	foo
+ref2	11	foo
+ref1	100	foo

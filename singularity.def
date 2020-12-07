@@ -1,0 +1,26 @@
+BootStrap: debootstrap
+OSVersion: bionic
+MirrorURL: http://us.archive.ubuntu.com/ubuntu/
+
+%environment
+export PATH=/bioinf-tools/:/bioinf-tools/Paragraph/bin:/bioinf-tools/vcflib/bin:$PATH
+
+
+%setup
+    mkdir $SINGULARITY_ROOTFS/minospb
+    rsync -a .ci/install_dependencies.sh minospb requirements.txt setup.py tests $SINGULARITY_ROOTFS/minospb/
+
+
+%post
+    #_____________________ setup $PATH _______________________#
+    export PATH=/bioinf-tools/:/bioinf-tools/Paragraph/bin:/bioinf-tools/vcflib/bin:$PATH
+
+    /minospb/install_dependencies.sh /bioinf-tools
+    cd /minospb
+    pip3 install pytest
+    pytest
+    pip3 install .
+
+
+%labels
+    Version 0.1.0

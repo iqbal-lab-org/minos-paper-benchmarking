@@ -1,0 +1,10 @@
+##header1
+##header2
+##contig=<ID=ref3,length=11>
+##contig=<ID=ref2,length=100>
+##contig=<ID=ref1,length=42>
+#CHROM
+ref2	11	foo
+ref2	20	foo
+ref1	1	foo
+ref1	100	foo
