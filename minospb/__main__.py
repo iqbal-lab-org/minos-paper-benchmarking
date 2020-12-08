@@ -10,7 +10,7 @@ def main(args=None):
     parser = argparse.ArgumentParser(
         prog="minospb",
         usage="minospb <command> <options>",
-        description="minospb: variant call adjudication",
+        description="minospb: minos publication benchmarking",
     )
 
     parser.add_argument("--version", action="version", version=minospb.__version__)
