@@ -13,7 +13,7 @@ setup(
     author_email="mhunt@ebi.ac.uk",
     url="https://github.com/iqbal-lab-org/minos-paper-benchmarking",
     tests_require=["pytest"],
-    entry_points={"console_scripts": ["minos-paper-bm = minos-paper-benchmarking.__main__:main"]},
+    entry_points={"console_scripts": ["minospb = minospb.__main__:main"]},
     install_requires=install_requires,
     license="MIT",
     classifiers=[
