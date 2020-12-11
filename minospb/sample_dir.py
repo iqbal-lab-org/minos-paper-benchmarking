@@ -240,7 +240,7 @@ class SampleDir:
             )
             minos_ref_fasta = self.prefixes["minos"] + ".ref.fa"
             pyfastaq.tasks.replace_bases(ref_fasta, minos_ref_fasta, "N", "C")
-            command = f"{self.time_cmd} minos --debug adjudicate {split_opt} --filter_min_gcp 0.5 --force --reads {self.rmdup_bam} {self.minos_dir} {minos_ref_fasta} {self.samtools_vcf} {self.cortex_vcf}"
+            command = f"{self.time_cmd} minos --debug adjudicate {split_opt} --force --reads {self.rmdup_bam} {self.minos_dir} {minos_ref_fasta} {self.samtools_vcf} {self.cortex_vcf}"
             utils.syscall(command, stdouterr=self.prefixes["minos"])
             json_out = os.path.join(self.minos_dir, "resources.json")
             resource_dirs["minos"] = self.minos_dir
