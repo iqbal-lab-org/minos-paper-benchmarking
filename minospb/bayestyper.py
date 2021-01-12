@@ -50,7 +50,7 @@ def run(outdir, ref_fasta, bam_file, samtools_vcf, cortex_vcf, sample_name, kmc_
     command = f"{time_cmd} bcftools norm -f {ref_fasta} {cortex_vcf} -o {cortex_norm_vcf}"
     utils.syscall(command, stdouterr=cortex_norm_out)
     err_files["norm_cortex"] = f"{cortex_norm_out}.err"
-    command = f"{time_cmd} bayesTyperTools combine -v samtools:{samtools_vcf},cortex:{cortex_vcf} -o {typertools_combine_out} -z"
+    command = f"{time_cmd} bayesTyperTools combine -v samtools:{samtools_norm_vcf},cortex:{cortex_norm_vcf} -o {typertools_combine_out} -z"
     utils.syscall(command, stdouterr=typertools_combine_out)
     err_files["combine"] = f"{typertools_combine_out}.err"
 
