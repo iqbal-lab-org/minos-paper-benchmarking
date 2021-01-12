@@ -24,6 +24,7 @@ apt-get install -y \
   libncurses5-dev \
   libncursesw5-dev \
   libssl-dev \
+  libtabixpp-dev \
   pkg-config \
   python-dev \
   python3 \
@@ -47,7 +48,6 @@ if [ ! -d $install_root ]; then
   mkdir $install_root
 fi
 cd $install_root
-
 
 # At time of writing, pysam 0.16.0 is latest, but throws error:
 # >>> import pysam
@@ -205,6 +205,10 @@ cp -s vt-git/vt .
 cd $install_root
 git clone --recursive https://github.com/vcflib/vcflib.git
 cd vcflib
+# Note date is 20210112. There's a bug when running make, when it tries to
+# install the man page. We don't care about this, so comment out the line
+awk '/^install.*\/man\/man1)/ {$0="#"$0} 1' CMakeLists.txt > z
+mv z CMakeLists.txt
 make
 
 #________________________ minos ______________________________#
