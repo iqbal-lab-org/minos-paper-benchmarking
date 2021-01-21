@@ -214,7 +214,10 @@ pip3 install .
 
 #________________________ Trimmomatic ____________________#
 cd $install_root
-wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.36.zip
+# Website is (permanently?) down. So copy of the zip is now
+# included in the repo and when the script runs, that copy
+# is assumed to already be in $install_root
+#wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.36.zip
 unzip Trimmomatic-0.36.zip
 
 
