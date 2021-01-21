@@ -165,14 +165,7 @@ cp -s minimap2_git/misc/paftools.js .
 
 
 #____________________ cluster_vcf_records _________________#
-cd $install_root
-git clone https://github.com/iqbal-lab-org/cluster_vcf_records.git
-cd cluster_vcf_records
-git checkout fd41155cea23c35196ae56f66402eb8e1b287b37
-pip3 install .
-cd ..
-rm -r cluster_vcf_records
-
+pip3 install 'cluster_vcf_records==0.13.1'
 
 #________________________ varifier __________________________#
 cd $install_root
@@ -215,7 +208,7 @@ make
 cd $install_root
 git clone https://github.com/iqbal-lab-org/minos.git
 cd minos
-git checkout ccbe2cc8b9d32686fa6c15d01e6b80adae01dc4e
+git checkout 0b8920bf18382c00534bf37a58cd7b8257409b24
 pip3 install .
 
 
