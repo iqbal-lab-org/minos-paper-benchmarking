@@ -108,10 +108,10 @@ rm KMC3.1.1.linux.tar.gz
 
 #________________________ mummer ____________________________#
 cd $install_root
-wget https://github.com/mummer4/mummer/releases/download/v4.0.0beta2/mummer-4.0.0beta2.tar.gz
-tar xf mummer-4.0.0beta2.tar.gz
-rm mummer-4.0.0beta2.tar.gz
-cd mummer-4.0.0beta2
+wget https://github.com/mummer4/mummer/releases/download/v4.0.0rc1/mummer-4.0.0rc1.tar.gz
+tar xf mummer-4.0.0rc1.tar.gz
+rm mummer-4.0.0rc1.tar.gz
+cd mummer-4.0.0rc1
 ./configure
 make
 make install
