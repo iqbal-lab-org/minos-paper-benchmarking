@@ -182,7 +182,7 @@ cd $install_root
 #pip3 install tox "six>=1.14.0"
 git clone https://github.com/iqbal-lab-org/gramtools
 cd gramtools
-git checkout 9313eceb606a6fc159e4a14c168b7a6f888c5ed2
+git checkout 8af53f6c8c0d72ef95223e89ab82119b717044f2
 pip3 install .
 
 #________________________ vt __________________________________#
