@@ -138,7 +138,7 @@ cp -s svimmer-0.1/svimmer .
 
 #________________________ graphtyper ________________________#
 cd $install_root
-wget https://github.com/DecodeGenetics/graphtyper/releases/download/v2.5.1/graphtyper
+wget https://github.com/DecodeGenetics/graphtyper/releases/download/v2.7.1/graphtyper
 chmod a+x graphtyper
 
 
