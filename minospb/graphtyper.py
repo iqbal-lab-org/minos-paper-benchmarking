@@ -8,6 +8,23 @@ from cluster_vcf_records import vcf_record
 from minospb import utils
 
 
+def _fix_sv_call(record, ref_seqs):
+    assert record.REF == "N"
+    if record.ALT[0].startswith("<DEL:"):
+        # deleted sequence isn't in the record, so get it from
+        #  the reference sequence
+        del_length = int(record.INFO["SVLEN"])
+        record.REF = ref_seqs[record.CHROM][
+            record.POS : record.POS + del_length + 1
+        ]
+        record.ALT = [record.REF[0]]
+    else:
+        assert record.ALT[0].startswith("<INS:")
+        ins_seq = record.INFO["SEQ"]
+        record.ALT = [ref_seqs[record.CHROM][record.POS] + ins_seq]
+        record.REF = record.ALT[0][0]
+
+
 def _fix_aggregated_sv_calls(ref_fasta, infile, outfile):
     """Takes VCF made by graphtyper sv, which has big indels reported over
     multiple lines using the INS and DEL tags in the ALT column. The first
@@ -28,28 +45,23 @@ def _fix_aggregated_sv_calls(ref_fasta, infile, outfile):
                 continue
 
             record = vcf_record.VcfRecord(line)
+
+            # The SVs come in lines of 3, or as single records. When the SV is
+            # 3 lines, we want to use the 'AGGREGATED' one. Otherwise we obviously
+            # use the only record there is. When there's an aggregated, looks
+            # like it is the first of the three - always check this.
             if record.ALT[0].startswith("<DEL:") or record.ALT[0].startswith("<INS:"):
                 if "AGGREGATED" in record.ALT[0]:
                     assert record.ID not in found_aggregated
                     found_aggregated.add(record.ID)
-                    assert record.REF == "N"
-                    if record.ALT[0].startswith("<DEL:"):
-                        # deleted sequence isn't in the record, so get it from
-                        #  the reference sequence
-                        del_length = int(record.INFO["SVLEN"])
-                        record.REF = ref_seqs[record.CHROM][
-                            record.POS : record.POS + del_length + 1
-                        ]
-                        record.ALT = [record.REF[0]]
-                    else:
-                        assert record.ALT[0].startswith("<INS:")
-                        ins_seq = record.INFO["SEQ"]
-                        record.ALT = [ref_seqs[record.CHROM][record.POS] + ins_seq]
-                        record.REF = record.ALT[0][0]
+                    _fix_sv_call(record, ref_seqs)
                 else:
                     aggregated_id = record.ID.rsplit(".", maxsplit=1)[0]
-                    assert aggregated_id in found_aggregated
-                    continue
+                    if aggregated_id not in found_aggregated:
+                        _fix_sv_call(record, ref_seqs)
+                        found_aggregated.add(aggregated_id)
+                    else:
+                        continue
 
             print(record, file=f_out)
 
