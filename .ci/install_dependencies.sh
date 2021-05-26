@@ -171,7 +171,7 @@ pip3 install 'cluster_vcf_records==0.13.2'
 cd $install_root
 git clone https://github.com/iqbal-lab-org/varifier.git
 cd varifier
-git checkout 8a7077a5475d855a15ff0b5024222ee1b8f737f8
+git checkout 970ceb7400a5f41b532f8846d4d0cb25f1b20588
 pip3 install .
 
 
