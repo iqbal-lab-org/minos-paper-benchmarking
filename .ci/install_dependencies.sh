@@ -208,7 +208,7 @@ make
 cd $install_root
 git clone https://github.com/martinghunt/minos.git
 cd minos
-git checkout f924e3ddf42fc95fadf4883a4db8d3f0b7a4f0e9
+git checkout 8457467a99d4d443bc8e585c6b804070d2b793ed
 pip3 install .
 
 
