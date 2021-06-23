@@ -35,7 +35,6 @@ class SampleDir:
             "bayestyper": os.path.join(self.merge_dir, "bayestyper"),
             "graphtyper_default": os.path.join(self.merge_dir, "graphtyper_default"),
             "graphtyper_sv": os.path.join(self.merge_dir, "graphtyper_sv"),
-            "graphtyper_combi": os.path.join(self.merge_dir, "graphtyper_combi"),
             "minos": os.path.join(self.merge_dir, "minos"),
         }
 
@@ -67,9 +66,6 @@ class SampleDir:
             ),
             "graphtyper_sv": os.path.join(
                 self.prefixes["graphtyper_sv"], "02.final.vcf"
-            ),
-            "graphtyper_combi": os.path.join(
-                self.prefixes["graphtyper_combi"], "final.vcf"
             ),
             "minos": os.path.join(self.minos_dir, "final.vcf"),
             "samtools": self.samtools_vcf,
@@ -275,19 +271,6 @@ class SampleDir:
             )
             resource_dirs["graphtyper_sv"] = self.prefixes["graphtyper_sv"]
             self.set_done("merge.graphtyper_sv")
-
-        # --------------------------- graphtyper_combi -----------------------------
-        if not minos_only and not self.is_done("merge.graphtyper_combi"):
-            logging.info("Start merge.graphtyper_combi")
-            utils.rm_rf(self.prefixes["graphtyper_combi"] + "*")
-            graphtyper.run_combi(
-                self.prefixes["graphtyper_combi"],
-                ref_fasta,
-                self.rmdup_bam,
-                [self.samtools_vcf, self.cortex_vcf],
-            )
-            resource_dirs["graphtyper_combi"] = self.prefixes["graphtyper_combi"]
-            self.set_done("merge.graphtyper_combi")
 
         resources = {
             k: utils.load_json(os.path.join(v, "resources.json"))
