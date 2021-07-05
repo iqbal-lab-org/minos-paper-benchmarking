@@ -206,9 +206,9 @@ make
 
 #________________________ minos ______________________________#
 cd $install_root
-git clone https://github.com/martinghunt/minos.git
+git clone https://github.com/iqbal-lab-org/minos.git
 cd minos
-git checkout 4eb3332cf81b4951964106d7aa816a76f4105cd2
+git checkout e955f16ab8c963c5fad4da3d0a2f65c1e70424e8
 pip3 install .
 
 
