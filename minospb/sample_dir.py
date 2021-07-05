@@ -325,28 +325,23 @@ class SampleDir:
 
             for filter_opt in "no_filter", "PASS":
                 results[tool_name][filter_opt] = {}
-                for mask in ["masked", "unmasked"]:
-                    outdir = os.path.join(tooldir, f"{mask}.{filter_opt}")
-                    done = f"eval_calls.{tool_name}.{mask}.{filter_opt}"
+                for using_ref_calls in ["with_ref_calls", "no_ref_calls"]:
+                    outdir = os.path.join(tooldir, f"{using_ref_calls}.{filter_opt}")
+                    done = f"eval_calls.{tool_name}.{using_ref_calls}.{filter_opt}"
                     logging.info(f"Start {done}")
                     summary_json = os.path.join(outdir, "summary_stats.json")
                     if not self.is_done(done):
-                        if mask == "masked" and mask_opt_string == "":
-                            utils.rm_rf(outdir)
-                            os.mkdir(outdir)
-                            utils.json_to_file({}, summary_json)
-                        else:
-                            filter_pass = (
-                                ""
-                                if filter_opt == "no_filter"
-                                else f"--filter_pass {filter_opt}"
-                            )
-                            mask_opt = "" if mask == "unmasked" else mask_opt_string
-                            command = f"varifier vcf_eval {varifier_opts} {mask_opt} {filter_pass} --force {truth_fasta} {ref_fasta} {vcf_to_eval} {outdir}"
-                            utils.syscall(command)
+                        filter_pass = (
+                            ""
+                            if filter_opt == "no_filter"
+                            else f"--filter_pass {filter_opt}"
+                        )
+                        ref_calls_opt = "" if using_ref_calls == "no_ref_calls" else "--use_ref_calls"
+                        command = f"varifier vcf_eval {varifier_opts} {ref_calls_opt} {mask_opt_string} {filter_pass} --force {truth_fasta} {ref_fasta} {vcf_to_eval} {outdir}"
+                        utils.syscall(command)
                         self.set_done(done)
 
-                    results[tool_name][filter_opt][mask] = utils.load_json(summary_json)
+                    results[tool_name][filter_opt][using_ref_calls] = utils.load_json(summary_json)
 
         utils.json_to_file(results, self.results_summary_json)
         self.set_done("eval_calls")
