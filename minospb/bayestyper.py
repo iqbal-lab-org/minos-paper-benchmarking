@@ -14,21 +14,18 @@ def write_ploidy_file(ref_fasta, outfile):
                 print(name, 1, 1, sep="\t", file=f_out)
 
 
-def run(outdir, ref_fasta, bam_file, samtools_vcf, cortex_vcf, sample_name, kmc_ram=12):
+def run(outdir, ref_fasta, bam_file, vcfs, sample_name, kmc_ram=12):
     outdir = os.path.abspath(outdir)
     ref_fasta = os.path.abspath(ref_fasta)
     bam_file = os.path.abspath(bam_file)
-    samtools_vcf = os.path.abspath(samtools_vcf)
-    cortex_vcf = os.path.abspath(cortex_vcf)
+    vcfs = [os.path.abspath(x) for x in vcfs]
+    vcfs_norm_out = [f"02.typertools.{i}.norm" for i in range(len(vcfs))]
+    vcfs_norm_vcfs = [f"{x}.vcf" for x in vcfs_norm_out]
     original_dir = os.getcwd()
     os.mkdir(outdir)
     os.chdir(outdir)
     time_cmd = "/usr/bin/time -v"
     kmc_out = "01.kmc"
-    samtools_norm_out = "02.typertools.samtools.norm"
-    samtools_norm_vcf = "02.typertools.samtools.norm.vcf"
-    cortex_norm_out = "02.typertools.cortex.norm"
-    cortex_norm_vcf = "02.typertools.cortex.norm.vcf"
     typertools_combine_out = "02.typertools.combine"
     typertools_cluster_out = "03.typertools.cluster"
     typertools_ploidy_file = "04.typertools.ploidy.tsv"
@@ -43,14 +40,15 @@ def run(outdir, ref_fasta, bam_file, samtools_vcf, cortex_vcf, sample_name, kmc_
     command = f"{time_cmd} bayesTyperTools makeBloom -k {kmc_out}"
     utils.syscall(command, stdouterr="makeBloom")
     err_files["makeBloom"] = "makeBloom.err"
+    vcf_opt_string = []
 
-    command = f"{time_cmd} bcftools norm -f {ref_fasta} {samtools_vcf} -o {samtools_norm_vcf}"
-    utils.syscall(command, stdouterr=samtools_norm_out)
-    err_files["norm_samtools"] = f"{samtools_norm_out}.err"
-    command = f"{time_cmd} bcftools norm -f {ref_fasta} {cortex_vcf} -o {cortex_norm_vcf}"
-    utils.syscall(command, stdouterr=cortex_norm_out)
-    err_files["norm_cortex"] = f"{cortex_norm_out}.err"
-    command = f"{time_cmd} bayesTyperTools combine -v samtools:{samtools_norm_vcf},cortex:{cortex_norm_vcf} -o {typertools_combine_out} -z"
+    for i, vcf_in in enumerate(vcfs):
+        command = f"{time_cmd} bcftools norm -f {ref_fasta} {vcf_in} -o {vcfs_norm_vcfs[i]}"
+        utils.syscall(command, stdouterr=vcfs_norm_out[i])
+        err_files[f"norm_{i}"] = f"{vcfs_norm_out[i]}.err"
+        vcf_opt_string.append(f"{i}:{vcfs_norm_vcfs[i]}")
+    vcf_opt_string = ",".join(vcf_opt_string)
+    command = f"{time_cmd} bayesTyperTools combine -v {vcf_opt_string} -o {typertools_combine_out} -z"
     utils.syscall(command, stdouterr=typertools_combine_out)
     err_files["combine"] = f"{typertools_combine_out}.err"
 

@@ -31,6 +31,7 @@ class SampleDir:
             "trim_reads": "trim_reads",
             "map_reads": "map_reads",
             "samtools": os.path.join(self.var_call_dir, "samtools"),
+            "snippy": os.path.join(self.var_call_dir, "snippy"),
             "cortex": os.path.join(self.var_call_dir, "cortex"),
             "bayestyper": os.path.join(self.merge_dir, "bayestyper"),
             "graphtyper_default": os.path.join(self.merge_dir, "graphtyper_default"),
@@ -54,6 +55,9 @@ class SampleDir:
         self.cortex_dir = self.prefixes["cortex"]
         self.cortex_vcf = self.prefixes["cortex"] + ".vcf"
         self.cortex_vcf_gz = self.cortex_vcf + ".gz"
+        self.snippy_dir = self.prefixes["snippy"]
+        self.snippy_vcf = os.path.join(self.prefixes["snippy"], "snps.vcf")
+        self.snippy_vcf_gz = self.snippy_vcf + ".gz"
         self.minos_dir = self.prefixes["minos"]
         self.resources_json = os.path.join(self.root_dir, "resources.json")
         self.results_summary_json = os.path.join(self.root_dir, "results_summary.json")
@@ -156,6 +160,15 @@ class SampleDir:
 
         ref_names, ref_lengths = utils.fasta_to_ordered_names_and_lengths(ref_fasta)
 
+        # --------------------------- snippy ---------------------------------------
+        if not self.is_done("var_call.snippy"):
+            logging.info("Start var_call.snippy")
+            utils.rm_rf(self.prefixes["snippy"] + "*")
+            command = f"snippy --rgid {sample_name} --cpus 1 --outdir {self.snippy_dir} --ref {ref_fasta}  --R1 {self.trim_reads1} --R2 {self.trim_reads2}"
+            utils.syscall(command, stdouterr=self.prefixes["snippy"])
+            utils.bgzip_and_tabix_vcf(self.snippy_vcf)
+            self.set_done("var_call.snippy")
+
         # --------------------------- samtools -------------------------------------
         if not self.is_done("var_call.samtools"):
             logging.info("Start var_call.samtools")
@@ -219,8 +232,7 @@ class SampleDir:
                 self.prefixes["bayestyper"],
                 ref_fasta,
                 self.rmdup_bam,
-                self.samtools_vcf,
-                self.cortex_vcf,
+                [self.samtools_vcf, self.cortex_vcf, self.snippy_vcf],
                 sample_name,
                 kmc_ram=kmc_ram,
             )
@@ -234,7 +246,7 @@ class SampleDir:
             split_opt = (
                 "" if minos_ref_splits == 1 else f"--total_splits {minos_ref_splits}"
             )
-            command = f"{self.time_cmd} minos --debug adjudicate {split_opt} --force --reads {self.rmdup_bam} {self.minos_dir} {ref_fasta} {self.samtools_vcf} {self.cortex_vcf}"
+            command = f"{self.time_cmd} minos --debug adjudicate {split_opt} --force --reads {self.rmdup_bam} {self.minos_dir} {ref_fasta} {self.samtools_vcf} {self.cortex_vcf} {self.snippy_vcf}"
             utils.syscall(command, stdouterr=self.prefixes["minos"])
             json_out = os.path.join(self.minos_dir, "resources.json")
             resource_dirs["minos"] = self.minos_dir
@@ -253,7 +265,7 @@ class SampleDir:
                 self.prefixes["graphtyper_default"],
                 ref_fasta,
                 self.rmdup_bam,
-                [self.samtools_vcf_gz, self.cortex_vcf_gz],
+                [self.samtools_vcf_gz, self.cortex_vcf_gz, self.snippy_vcf_gz],
             )
             resource_dirs["graphtyper_default"] = self.prefixes["graphtyper_default"]
             self.set_done("merge.graphtyper_default")
@@ -266,7 +278,7 @@ class SampleDir:
                 self.prefixes["graphtyper_sv"],
                 ref_fasta,
                 self.rmdup_bam,
-                [self.samtools_vcf_gz, self.cortex_vcf_gz],
+                [self.samtools_vcf_gz, self.cortex_vcf_gz, self.snippy_vcf_gz],
                 call_sv=True,
             )
             resource_dirs["graphtyper_sv"] = self.prefixes["graphtyper_sv"]

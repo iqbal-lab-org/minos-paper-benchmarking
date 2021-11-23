@@ -297,3 +297,10 @@ cd ivcfmerge
 git checkout 5819787614a263a9f35fd0c247442f092ab174ff
 pip3 install .
 
+
+#______________________ snippy ________________________________#
+cd $install_root
+wget https://github.com/tseemann/snippy/archive/refs/tags/v4.6.0.tar.gz
+tar xf v4.6.0.tar.gz
+rm v4.6.0.tar.gz
+
