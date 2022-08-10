@@ -64,8 +64,8 @@ pip3 install pysam==0.15.4
 
 #__________________________ ART _______________________________#
 cd $install_root
-wget -q https://www.niehs.nih.gov/research/resources/assets/docs/artbinmountrainier20160605linux64tgz.tgz
-tar xf artbinmountrainier20160605linux64tgz.tgz
+wget -q https://www.niehs.nih.gov/research/resources/assets/docs/artbinmountrainier2016.06.05linux64.tgz
+tar xf artbinmountrainier2016.06.05linux64.tgz
 cp -s art_bin_MountRainier/art_illumina .
 
 
